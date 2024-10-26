@@ -1,0 +1,55 @@
+body {
+  font-family: Arial, sans-serif;
+  background-color:antiquewhite;
+  display:flex;
+  justify-content:center;
+  padding:20.px;
+}
+
+.container{
+  background-color: #fff;
+  padding:20px;
+  border-radius: 8px;
+  box-shadow:0 0 10px rgba(0, 0, 0, 0.1);
+  max-width:500px;
+  width:100%;
+}
+
+h1 {
+  font-size:24px;
+  color:#333;
+  text-align:center;
+}
+
+form{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+label {
+  font-weight:bold;
+}
+
+input, select, button {
+  padding:10px;
+  border:1px solid #ccc;
+  border-radius:4px;
+}
+
+button{
+  background-color:#4CAF50;
+  color:white;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+button:hover{
+  background-color:#45a049;
+}
+
+#holidayResults .holiday{
+  padding:10px;
+  margin:10px 0;
+  border-bottom:1px solid #ddd;
+}

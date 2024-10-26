@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,
+  initial-scale=1.0">
+  <title>Public Holiday Finder</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Public Holiday Finder</h1>
+    <form id="holidayForm">
+      <label for="country">Country:</label>
+      <select id="country" name="country">
+        <option value="US">United States</option>
+        <option value="GB">United Kingdom</option>
+        <option value="IN">India</option>
+      </select>
+
+      <label for="year">Year:</label>
+      <input type="number" id="year" name="year"
+      value="2024" min="1900" max="2100">
+
+      <button type="submit">Find Holidays</button>
+    </form>
+    <div id="holidayResults"></div>  
+  </div>
+
+  <script src="main.js"></script>
+</body>
+</html>
