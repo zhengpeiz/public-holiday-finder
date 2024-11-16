@@ -14,13 +14,13 @@ function handleFormSubmit(event){
 
 async function fetchHolidays(country, year){
   const apiKey = 'mhkpKExILr5ixNjNvS01FOq7p0na3Ecn'; // Replace with actual API key
-  const url = `https://calendarific.com/api/v2/holidays?api_key=${apiKey}&country=${country}&year=${year}`;
+  const url = `https://calendarific.com/api/v2/holidays?&api_key=${apiKey}&country=${country}&year=${year}`;
 
   try {
     const response = await fetch(url);
     const data = await response.json();
 
-    if(data.response.holidays && data.response.hoildays.length > 0) {
+    if(data.response.holidays && data.response.holidays.length > 0) {
       displayHolidays(data.response.holidays);
     } else {
       displayMessage('No holidays found for this country and year!');
