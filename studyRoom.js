@@ -1,3 +1,4 @@
+let startButton, pauseButton, timerDisplay, alarmSound, backgroundMusic;
 export function loadStudyRoom() {
   document.getElementById('content-placeholder').innerHTML = `
     <h1>Virtual Study Room</h1>
@@ -18,6 +19,13 @@ export function loadStudyRoom() {
     <audio id="alarmSound" src="assets/sounds/alarm.mp3" preload="auto"></audio>
     <audio id="backgroundMusic" src="assets/sounds/study-music.mp3" loop preload="auto"></audio>
     `;
+
+    startButton = document.getElementById('startTimer');
+    pauseButton = document.getElementById('pauseTimer');
+    timerDisplay = document.getElementById('timerDisplay');
+    alarmSound = document.getElementById('alarmSound');
+    backgroundMusic = document.getElementById('backgroundMusic');
+
     addTimerFunctionality();
 
 }
@@ -25,17 +33,16 @@ export function loadStudyRoom() {
 let timerInterval;
 let isStudyTime = true;
 let remainingTime = 0;
+let studyTime = 0;
+let breakTime = 0;
+
+
 
 function addTimerFunctionality() {
-  const startButton = document.getElementById('startTimer');
-  const pauseButton = document.getElementById('pauseTimer');
-  const timerDisplay = document.getElementById('timerDisplay');
-  const alarmSound = document.getElementById('alarmSound');
-  const backgroundMusic = document.getElementById('backgroundMusic');
-
+  
   startButton.addEventListener('click', () => {
-    const studyTime = parseInt(document.getElementById('studyTimeInput').value) * 60;
-    const breakTime = parseInt(document.getElementById('breakTimeInput').value) * 60;
+    studyTime = parseInt(document.getElementById('studyTimeInput').value) * 60;
+    breakTime = parseInt(document.getElementById('breakTimeInput').value) * 60;
 
     if (!timerInterval) {
       remainingTime = isStudyTime ? studyTime : breakTime;
@@ -47,17 +54,25 @@ function addTimerFunctionality() {
     }
   });
 
-  startButton.addEventListener('click', () => {
+  /*startButton.addEventListener('click', () => {
     console.log('Start button clicked');
     backgroundMusic.play().catch(err => console.error('Error playing background music:', err));
-  });
+  });*/
   
-  pauseButton.addEventListener('click',() => {
-    clearInterval(timerInterval);
-    timerInterval = null;
-    startButton.disabled = false;
-    pauseButton.disabled = true;
-    backgroundMusic.pause();
+  pauseButton.addEventListener('click', () => {
+    if (pauseButton.textContent === 'Pause') {
+      clearInterval(timerInterval);
+      timerInterval = null;
+      pauseButton.textContent = 'Resume';
+      backgroundMusic.pause();
+    } else {
+      pauseButton.textContent = 'Pause';
+      if(isStudyTime)
+      {   
+        backgroundMusic.play();
+      }
+      startTimer(studyTime, breakTime, timerDisplay, alarmSound, backgroundMusic);
+    }
   });
 }
 
@@ -67,13 +82,19 @@ function startTimer(studyTime, breakTime, timerDisplay, alarmSound, backgroundMu
       remainingTime--;
       updateTimerDisplay(remainingTime);
     } else {
-      
+      //disable the pause button when the alarm is played
+     pauseButton.disabled = true;
+
       clearInterval(timerInterval);
       timerInterval = null;
-      updateTimerDisplay(0);
-      alarmSound.play();
+      updateTimerDisplay(0); 
 
-      //when the alarm sound finishes,continue the timer
+      
+      
+      alarmSound.play(); 
+      
+
+      
       alarmSound.onended = () => {
         isStudyTime = !isStudyTime;
         remainingTime = isStudyTime ? studyTime : breakTime;
@@ -87,7 +108,11 @@ function startTimer(studyTime, breakTime, timerDisplay, alarmSound, backgroundMu
 
         // Restart the timer
         startTimer(studyTime, breakTime, timerDisplay, alarmSound, backgroundMusic);
+        //enable the button when the timer starts again
+        pauseButton.disabled = false;
       }
+
+      
     }
   }, 1000);
 }
