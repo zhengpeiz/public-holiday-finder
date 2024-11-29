@@ -1,23 +1,70 @@
 let startButton, pauseButton, timerDisplay, alarmSound, backgroundMusic;
+
+const studyRoomState = new Proxy(
+  {
+    studyTime: 30 * 60,
+    breakTime: 10 * 60,
+    remainingTime: 0,
+    isStudyTime: true,
+    timerRunning: false,
+    backgroundMusicPlaying: false,
+    pauseButtonDisabled: true, 
+    pauseOrResume: true, //the pause button is initially pause
+    startButtonDisabled: false,
+    inputs: {
+      studyTimeInput: 30,
+      breakTimeInput: 10,
+    },
+  },
+  {
+
+    set(target, property, value) {
+      target[property] = value;
+
+      if (property === 'pauseButtonDisabled') {
+        updateButtonState('pauseTimer', value);
+      } else if(property === 'startButtonDisabled'){
+        updateButtonState('startTimer', value);
+      } else if(property === 'pauseOrResume'){
+        updateButtonText('pauseTimer', value ? 'Pause' : 'Resume');
+      }
+
+      return true;
+    }
+  }
+); 
+
+function updateButtonState(buttonId, disabled) {
+  const button = document.getElementById(buttonId);
+  if (button){
+    button.disabled = disabled;
+  }
+}
+
+function updateButtonText(buttonId, text) {
+  const button = document.getElementById(buttonId);
+  if (button) {
+    button.textContent = text;
+  }
+}
+
 export function loadStudyRoom() {
   document.getElementById('content-placeholder').innerHTML = `
     <h1>Virtual Study Room</h1>
     <div class="timer-controls">
       <label>Study Time (minutes):
-        <input type="number" id="studyTimeInput" value="30" min="1">
+        <input type="number" id="studyTimeInput" value="${studyRoomState.inputs.studyTimeInput}" min="1">
       </label>
       <label>Break Time (minutes):
-        <input type="number" id="breakTimeInput" value="10" min="1">
+        <input type="number" id="breakTimeInput" value="${studyRoomState.inputs.breakTimeInput}" min="1">
       </label>  
-      <button id="startTimer">Start Timer</button>
-      <button id="pauseTimer" disabled>Pause</button>
+      <button id="startTimer" ${studyRoomState.startButtonDisabled ? 'disabled' : ''}>Start Timer</button>
+      <button id="pauseTimer" ${studyRoomState.pauseButtonDisabled ? 'disabled' : ''}>${studyRoomState.pauseOrResume ? 'Pause' : 'Resume'}</button>
     </div>
 
-    <div id="timerDisplay">00:00</div>
+    <div id="timerDisplay">${formatTime(studyRoomState.remainingTime)}</div>
 
-    <!-- Audio Elements for Alarm and Background Music -->
-    <audio id="alarmSound" src="assets/sounds/alarm.mp3" preload="auto"></audio>
-    <audio id="backgroundMusic" src="assets/sounds/study-music.mp3" loop preload="auto"></audio>
+    
     `;
 
     startButton = document.getElementById('startTimer');
@@ -26,31 +73,40 @@ export function loadStudyRoom() {
     alarmSound = document.getElementById('alarmSound');
     backgroundMusic = document.getElementById('backgroundMusic');
 
+    if (studyRoomState.timerRunning){
+      startTimer();
+    }
+    
     addTimerFunctionality();
 
 }
 
 let timerInterval;
-let isStudyTime = true;
-let remainingTime = 0;
-let studyTime = 0;
-let breakTime = 0;
+
 
 
 
 function addTimerFunctionality() {
   
   startButton.addEventListener('click', () => {
-    studyTime = parseInt(document.getElementById('studyTimeInput').value) * 60;
-    breakTime = parseInt(document.getElementById('breakTimeInput').value) * 60;
+    studyRoomState.inputs.studyTimeInput = parseInt(document.getElementById('studyTimeInput').value);
+    studyRoomState.inputs.breakTimeInput = parseInt(document.getElementById('breakTimeInput').value);
 
+    studyRoomState.studyTime = studyRoomState.inputs.studyTimeInput * 60;
+    studyRoomState.breakTime = studyRoomState.inputs.breakTimeInput * 60;
+    
     if (!timerInterval) {
-      remainingTime = isStudyTime ? studyTime : breakTime;
-      updateTimerDisplay(remainingTime);
+      
+      studyRoomState.remainingTime = studyRoomState.isStudyTime  
+      ? studyRoomState.studyTime 
+      : studyRoomState.breakTime;
+      studyRoomState.timerRunning = true;
+      updateTimerDisplay(studyRoomState.remainingTime);
       backgroundMusic.play();
-      startTimer(studyTime, breakTime, timerDisplay, alarmSound, backgroundMusic);
-      startButton.disabled = true;
-      pauseButton.disabled = false;
+      studyRoomState.backgroundMusicPlaying = true;
+      startTimer();
+      studyRoomState.startButtonDisabled = true;
+      studyRoomState.pauseButtonDisabled = false;
     }
   });
 
@@ -63,31 +119,40 @@ function addTimerFunctionality() {
     if (pauseButton.textContent === 'Pause') {
       clearInterval(timerInterval);
       timerInterval = null;
-      pauseButton.textContent = 'Resume';
+      pauseButton.textContent = 'Resume'; 
+      studyRoomState.pauseOrResume = false;
       backgroundMusic.pause();
+      studyRoomState.backgroundMusicPlaying = false;
+      studyRoomState.timerRunning = false;
     } else {
       pauseButton.textContent = 'Pause';
-      if(isStudyTime)
+      studyRoomState.pauseOrResume = true;
+      if(studyRoomState.isStudyTime)
       {   
         backgroundMusic.play();
+        studyRoomState.backgroundMusicPlaying = true;
       }
-      startTimer(studyTime, breakTime, timerDisplay, alarmSound, backgroundMusic);
+      startTimer();
+      studyRoomState.timerRunning = true;
     }
   });
 }
 
-function startTimer(studyTime, breakTime, timerDisplay, alarmSound, backgroundMusic){
+function startTimer(){
+  if(timerInterval) return; //Prevent duplicate
+  
   timerInterval = setInterval(() => {
-    if (remainingTime > 0) {
-      remainingTime--;
-      updateTimerDisplay(remainingTime);
+    if (studyRoomState.remainingTime > 0) {
+      studyRoomState.remainingTime--;
+      updateTimerDisplay(studyRoomState.remainingTime);
     } else {
-      //disable the pause button when the alarm is played
-     pauseButton.disabled = true;
+      //disable the pause button 
+     studyRoomState.pauseButtonDisabled = true;
 
       clearInterval(timerInterval);
       timerInterval = null;
-      updateTimerDisplay(0); 
+      studyRoomState.remainingTime = 0;
+      updateTimerDisplay(studyRoomState.remainingTime); 
 
       
       
@@ -96,20 +161,22 @@ function startTimer(studyTime, breakTime, timerDisplay, alarmSound, backgroundMu
 
       
       alarmSound.onended = () => {
-        isStudyTime = !isStudyTime;
-        remainingTime = isStudyTime ? studyTime : breakTime;
+        studyRoomState.isStudyTime = !studyRoomState.isStudyTime;
+        studyRoomState.remainingTime = studyRoomState.isStudyTime 
+        ? studyRoomState.studyTime 
+        : studyRoomState.breakTime;
 
         //play the music if entering study phase
-        if(isStudyTime) {
+        if(studyRoomState.isStudyTime) {
           backgroundMusic.play();
         } else {
           backgroundMusic.pause();
         }
 
         // Restart the timer
-        startTimer(studyTime, breakTime, timerDisplay, alarmSound, backgroundMusic);
-        //enable the button when the timer starts again
-        pauseButton.disabled = false;
+        startTimer();
+        //enable the button 
+        studyRoomState.pauseButtonDisabled = false;
       }
 
       
@@ -121,5 +188,13 @@ function updateTimerDisplay(time){
   const minutes = Math.floor(time/60);
   const seconds = time % 60;
   const timerDisplay = document.getElementById('timerDisplay');
-  timerDisplay.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+  if (timerDisplay) {
+    timerDisplay.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+  }
+}
+
+function formatTime(time) {
+  const minutes = Math.floor(time / 60);
+  const seconds = time % 60;
+  return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
 }
