@@ -150,6 +150,9 @@ function addTimerFunctionality() {
       studyRoomState.timerRunning = true;
       updateTimerDisplay(studyRoomState.remainingTime);
       backgroundMusic.play();
+      ///
+      alarmSound.play();
+      ///
       console.log("This gigi line.");
       startTimer();
       studyRoomState.pauseButtonDisabled = false;
@@ -225,7 +228,7 @@ function startTimer() {
           studyRoomState.remainingTime = Math.ceil(timeRemainingMs / 1000);
           updateTimerDisplay(studyRoomState.remainingTime);
         } else {
-          playAlarmSound();
+          alarmSound.play();
 
           studyRoomState.pauseButtonDisabled = true;
           // Timer ends
@@ -421,26 +424,5 @@ function toggleSessionElements(sessionActive) {
     });
   }
   
-  function playAlarmSound() {
-    const maxRetries = 3; // Number of retry attempts
-    let attempt = 0;
   
-    function tryPlay() {
-      alarmSound.play().then(() => {
-        console.log("Alarm sound played successfully.");
-      }).catch((error) => {
-        console.error("Failed to play alarm sound:", error);
-        attempt++;
-        if (attempt < maxRetries) {
-          console.log(`Retrying alarm sound playback... Attempt ${attempt}`);
-          setTimeout(tryPlay, 500); // Retry after 500ms
-        } else {
-          console.error("Failed to play alarm sound after multiple attempts.");
-          // Optional: Notify the user to interact with the page
-        }
-      });
-    }
-  
-    tryPlay();
-  }
   
