@@ -108,6 +108,7 @@ export function loadStudyRoom() {
 }
 
 let timerInterval;
+let timerWorker;
 
 //This happends during the loading of study room 
 function addTimerFunctionality() {
@@ -140,8 +141,7 @@ function addTimerFunctionality() {
   //Pause/Resume button click event
   pauseButton.addEventListener('click', () => {
     if (pauseButton.textContent === 'Pause') {
-      clearInterval(timerInterval);
-      timerInterval = null;
+      stopTimerWorker();
       pauseButton.textContent = 'Resume'; 
       studyRoomState.pauseOrResume = false;
       backgroundMusic.pause();
@@ -163,8 +163,7 @@ function addTimerFunctionality() {
   //End button click event
   endSessionButton.addEventListener('click', () => {
     // clear the timer
-    clearInterval(timerInterval);
-    timerInterval = null;
+    stopTimerWorker();
 
     // reset the session state;
     studyRoomState.sessionActive = false;
@@ -189,77 +188,64 @@ function addTimerFunctionality() {
 }
 //Start/Continue the Timer based on the remaining time and the study&break time set by the user
 function startTimer() {
-  console.log(`this line is reached`); 
-  console.log(`timerInterval is: ${timerInterval? "not null" : "null"}`);
   if (timerInterval) return; // Prevent duplicate intervals
 
-  const startTime = Date.now(); // Record the start time
-  console.log(`remaining time is now33: ${studyRoomState.remainingTime}`); 
-  const endTime = startTime + studyRoomState.remainingTime * 1000; // Calculate the end time based on remaining time
+  const startTime = Date.now();
+  const endTime = startTime + studyRoomState.remainingTime * 1000;
 
-  timerInterval = setInterval(() => {
-    const currentTime = Date.now(); // Get the current time
-    console.log(`remaining time is now1: ${studyRoomState.remainingTime}`); 
-    const timeRemainingMs = endTime - currentTime; // Calculate remaining time in milliseconds
-    
-    if (timeRemainingMs > 0) {
-      studyRoomState.remainingTime = Math.ceil(timeRemainingMs / 1000); // Convert ms to seconds
-      console.log(`remaining time is now2: ${studyRoomState.remainingTime}`); 
-      updateTimerDisplay(studyRoomState.remainingTime);
-      
-    } else {
-      // Disable the pause button when timer ends
-      studyRoomState.pauseButtonDisabled = true;
+  if (!timerWorker) {
+    timerWorker = new Worker("timerWorker.js");
 
-      clearInterval(timerInterval);
-      console.log(`remaining time is now less than 0: ${studyRoomState.remainingTime}`);
-      timerInterval = null; 
-      console.log(`timerInterval set to null?: ${timerInterval? "not null" : "null"}`);
+    timerWorker.onmessage = function (e) {
+      if (e.data === "tick") {
+        const currentTime = Date.now();
+        const timeRemainingMs = endTime - currentTime;
 
-      studyRoomState.remainingTime = 0;
-      updateTimerDisplay(studyRoomState.remainingTime);
-
-      
-      
-      // Play alarm sound
-      alarmSound.play();
-      console.log(`Play Bitch`);
-      // When alarm sound finishes, transition to next phase
-      alarmSound.onended = () => {
-        alarmSound.pause();
-        console.log("alarmSound.onended triggered!");
-      console.log(`alarmSound.paused: ${alarmSound.paused}`);
-    console.log(`alarmSound.currentTime: ${alarmSound.currentTime}`);
-    console.log(`alarmSound.ended: ${alarmSound.ended}`);
-        console.trace();
-        console.log(`isStudyTime before toggle: ${studyRoomState.isStudyTime}`);
-
-        studyRoomState.isStudyTime = !studyRoomState.isStudyTime; // Toggle study/break phase
-        console.log(`isStudyTime has changed: ${studyRoomState.isStudyTime ? "Study Phase" : "Break Phase"}`);
-        console.log(`study time is: ${studyRoomState.studyTime}`);
-        console.log(`break time is: ${studyRoomState.breakTime}`);
-        
-        studyRoomState.remainingTime = studyRoomState.isStudyTime
-          ? studyRoomState.studyTime
-          : studyRoomState.breakTime;
-
-        console.log(`remaining time is now: ${studyRoomState.remainingTime}`);  
-        // Handle background music based on phase
-        if (studyRoomState.isStudyTime) {
-          backgroundMusic.play();
+        if (timeRemainingMs > 0) {
+          studyRoomState.remainingTime = Math.ceil(timeRemainingMs / 1000);
+          updateTimerDisplay(studyRoomState.remainingTime);
         } else {
-          backgroundMusic.pause();
+          studyRoomState.pauseButtonDisabled = true;
+          // Timer ends
+          stopTimerWorker();
+          studyRoomState.remainingTime = 0;
+          updateTimerDisplay(studyRoomState.remainingTime);
+
+          // Play alarm sound
+          alarmSound.play();
+          console.log("Alarm sound played");
+
+          alarmSound.onended = () => {
+            studyRoomState.isStudyTime = !studyRoomState.isStudyTime;
+            studyRoomState.remainingTime = studyRoomState.isStudyTime
+              ? studyRoomState.studyTime
+              : studyRoomState.breakTime;
+
+            // Handle background music
+            if (studyRoomState.isStudyTime) {
+              backgroundMusic.play();
+            } else {
+              backgroundMusic.pause();
+            }
+
+            startTimer(); // Restart the timer
+            studyRoomState.pauseButtonDisabled = false;
+          };
         }
+      }
+    };
+  }
 
-        console.log(`stateTimer() is reached`); 
-        // Restart the timer
-        startTimer();
+  // Start the Web Worker timer
+  timerWorker.postMessage({ command: "start", intervalTime: 1000 });
+}
 
-        // Re-enable the pause button when the timer restarts
-        studyRoomState.pauseButtonDisabled = false;
-      };
-    }
-  }, 1000); // Check every second
+function stopTimerWorker() {
+  if (timerWorker) {
+    timerWorker.postMessage({ command: "stop" });
+    timerWorker.terminate();
+    timerWorker = null;
+  }
 }
 
 
