@@ -7,7 +7,16 @@ document.addEventListener('DOMContentLoaded', () => {
   const mainContent = document.getElementById('main-content');
   const studyRoomOption = document.getElementById('study-room-option');
   const holidayFinderOption = document.getElementById('holiday-finder-option');
-  
+  ////////
+  /*
+  const originalPlay = alarmSound.play.bind(alarmSound);
+
+  alarmSound.play = function () {
+  console.log("alarmSound.play() triggered!");
+  console.trace(); // Log the stack trace to identify the call location
+  return originalPlay();
+  /////////
+};*/
   // Toggle sidebar visibility
   menuIcon.addEventListener('click', () => {
     const sidebarLeft = window.getComputedStyle(sidebar).left;
@@ -42,4 +51,5 @@ document.addEventListener('DOMContentLoaded', () => {
   studyRoomOption.click();
 
 });
+
 
