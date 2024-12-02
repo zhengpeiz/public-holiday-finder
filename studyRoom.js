@@ -225,7 +225,8 @@ function startTimer() {
           studyRoomState.remainingTime = Math.ceil(timeRemainingMs / 1000);
           updateTimerDisplay(studyRoomState.remainingTime);
         } else {
-          alarmSound.play();
+          playAlarmSound();
+
           studyRoomState.pauseButtonDisabled = true;
           // Timer ends
           stopTimerWorker();
@@ -358,7 +359,6 @@ function toggleSessionElements(sessionActive) {
   }
   
   //Suppress Safari from play audio when clicking back when it's not suppose to play
-  /*
   document.addEventListener("visibilitychange", () => {
     if (!document.hidden) {
       if (studyRoomState.remainingTime > 0 || alarmSound.paused) {
@@ -372,7 +372,7 @@ function toggleSessionElements(sessionActive) {
       
       
     }
-  }); */
+  }); 
   
 
   function updateWallpaper(newWallpaper) {
@@ -419,5 +419,28 @@ function toggleSessionElements(sessionActive) {
         inputElement.value = inputElement.min;
       }
     });
+  }
+  
+  function playAlarmSound() {
+    const maxRetries = 3; // Number of retry attempts
+    let attempt = 0;
+  
+    function tryPlay() {
+      alarmSound.play().then(() => {
+        console.log("Alarm sound played successfully.");
+      }).catch((error) => {
+        console.error("Failed to play alarm sound:", error);
+        attempt++;
+        if (attempt < maxRetries) {
+          console.log(`Retrying alarm sound playback... Attempt ${attempt}`);
+          setTimeout(tryPlay, 500); // Retry after 500ms
+        } else {
+          console.error("Failed to play alarm sound after multiple attempts.");
+          // Optional: Notify the user to interact with the page
+        }
+      });
+    }
+  
+    tryPlay();
   }
   
