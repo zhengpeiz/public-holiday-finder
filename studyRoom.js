@@ -225,6 +225,7 @@ function startTimer() {
           studyRoomState.remainingTime = Math.ceil(timeRemainingMs / 1000);
           updateTimerDisplay(studyRoomState.remainingTime);
         } else {
+          alarmSound.play();
           studyRoomState.pauseButtonDisabled = true;
           // Timer ends
           stopTimerWorker();
@@ -232,7 +233,7 @@ function startTimer() {
           updateTimerDisplay(studyRoomState.remainingTime);
 
           // Play alarm sound
-          alarmSound.play();
+          //alarmSound.play();
           console.log("Alarm sound played");
 
           alarmSound.onended = () => {
