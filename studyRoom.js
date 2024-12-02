@@ -225,6 +225,7 @@ function startTimer() {
           studyRoomState.remainingTime = Math.ceil(timeRemainingMs / 1000);
           updateTimerDisplay(studyRoomState.remainingTime);
         } else {
+          backgroundMusic.pause();
           alarmSound.play();
 
           studyRoomState.pauseButtonDisabled = true;
