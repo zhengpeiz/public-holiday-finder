@@ -358,6 +358,7 @@ function toggleSessionElements(sessionActive) {
   }
   
   //Suppress Safari from play audio when clicking back when it's not suppose to play
+  /*
   document.addEventListener("visibilitychange", () => {
     if (!document.hidden) {
       if (studyRoomState.remainingTime > 0 || alarmSound.paused) {
@@ -368,18 +369,11 @@ function toggleSessionElements(sessionActive) {
       if (!studyRoomState.isStudyTime) {
         backgroundMusic.pause();
       }
-      /*
-      console.log("Tab became visible.");
-      console.log(`alarmSound.paused: ${alarmSound.paused}`);
-      console.log(`alarmSound.currentTime: ${alarmSound.currentTime}`);
-      console.log(`alarmSound.ended: ${alarmSound.ended}`);
-      console.log(`backgroundMusic.paused: ${backgroundMusic.paused}`);
-      console.log(`backgroundMusic.currentTime: ${backgroundMusic.currentTime}`);
-      console.log(`backgroundMusic.ended: ${backgroundMusic.ended}`); 
-      console.log("Tab visible. Ensuring alarm sound does not play unintentionally.");*/
+      
       
     }
-  }); 
+  }); */
+  
 
   function updateWallpaper(newWallpaper) {
     studyRoomState.wallpaper = newWallpaper;
