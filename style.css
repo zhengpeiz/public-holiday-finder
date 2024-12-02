@@ -37,6 +37,10 @@ input, select, button {
   border-radius:4px;
 }
 
+.menu-icon{
+  color:#ccc
+}
+
 button{
   background-color:#4CAF50;
   color:white;
@@ -95,5 +99,77 @@ button:hover{
 
 .main-content {
   transition: margin-left 0.3s ease;
+}
+
+
+
+/* Make the container take full page size */
+.study-room-container {
+  position: relative;
+  width: 100vw; /* Full width */
+  height: 100vh; /* Full height */
+  overflow: hidden; /* Ensure no overflow issues */
+}
+
+/*****For Study Room!*******/
+/* Background styles */
+.study-room-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: no-repeat center center;
+  background-size: cover; /* Ensure the image covers the container */
+  z-index: -1; /* Send it to the back */
+}
+
+/* Content styles */
+.study-room-content {
+  position: relative;
+  z-index: 1; /* Ensure content is on top of the background */
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Center content horizontally */
+  justify-content: center; /* Center content vertically */
+  padding: 1rem; /* Optional spacing */
+} 
+
+/* Make the title (Virtual Study Room) larger */
+.study-room-content h1 {
+  font-size: 2.5rem; /* Adjust to your preference */
+  font-weight: bold;
+  margin-bottom: 20px;
+  text-align: center; /* Optional: Center the title */
+}
+
+/* Make the labels (Study Time, Break Time) larger */
+.study-room-content label {
+  font-size: 1.2rem; /* Adjust to your preference */
+  margin-bottom: 10px; /* Optional: Add space between labels */
+  display: block; /* Ensure labels are on their own line */
+}
+
+/* Make the buttons larger */
+.study-room-content button {
+  font-size: 1.2rem; /* Adjust to your preference */
+  padding: 10px 20px; /* Add padding for larger clickable area */
+  border-radius: 5px; /* Optional: Rounded corners */
+}
+
+/* Make the timer display larger */
+#timerDisplay {
+  font-size: 3rem; /* Adjust to your preference */
+  font-weight: bold;
+  text-align: center;
+  margin: 20px 0; /* Add some spacing around the timer */
+}
+
+/* Make the input fields larger */
+.study-room-content input {
+  font-size: 1.2rem; /* Adjust to your preference */
+  padding: 5px; /* Add padding for better usability */
+  margin: 5px 0; /* Add spacing between inputs */
+  border-radius: 5px; /* Optional: Rounded corners */
 }
 

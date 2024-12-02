@@ -20,6 +20,8 @@ const studyRoomState = new Proxy(
       alarm: 0.3, // 30%
       music: 0.3, // 30%
     },
+
+    wallpaper : 'assets/images/background1.gif',
   },
   {
 
@@ -34,7 +36,7 @@ const studyRoomState = new Proxy(
         toggleSessionElements(value);
       } else if(property ==='isStudyTime'){
         toggleStudyPromt(value);
-        console.log(`isStudyTime has changed: ${value ? "Study Phase" : "Break Phase"}`);
+        //console.log(`isStudyTime has changed: ${value ? "Study Phase" : "Break Phase"}`);
       } else if (property === 'volumes') {
         // When volumes object is updated, apply changes to the audio elements
         if (value.alarm !== undefined) {
@@ -49,6 +51,12 @@ const studyRoomState = new Proxy(
     }
   }
 ); 
+
+const wallpaperStyles = {
+  "assets/images/background1.gif": "lightgrey", // Text color for dark background
+  "assets/images/background2.gif": "black",    // Text color for light background
+  "assets/images/background3.gif": "white",    // Text color for medium-dark background
+};
 
 function updateButtonState(buttonId, disabled) {
   const button = document.getElementById(buttonId);
@@ -66,7 +74,11 @@ function updateButtonText(buttonId, text) {
 
 //When the study room is Loaded
 export function loadStudyRoom() {
-  document.getElementById('content-placeholder').innerHTML = `
+  const contentPlaceholder = document.getElementById("content-placeholder");
+  contentPlaceholder.innerHTML = `
+  <div class="study-room-container">
+  <div class="study-room-background"></div>
+  <div class="study-room-content">
     <h1>Virtual Study Room</h1>
     <div class="timer-controls">
       <label id="studyTimeText">Study Time (minutes):
@@ -78,16 +90,22 @@ export function loadStudyRoom() {
       <button id="startTimer">Start Timer</button>
       
       <h2 id="studyPrompt"></h2>
-
       <div id="timerDisplay"></div>
       <button id="pauseTimer" ${studyRoomState.pauseButtonDisabled ? 'disabled' : ''}>${studyRoomState.pauseOrResume ? 'Pause' : 'Resume'}</button>
       <button id="endSession">End Session</button>
     </div>
-
-    
+  </div>
+</div>
 
     
     `;
+
+    const studyTimeInput = document.getElementById('studyTimeInput');
+    const breakTimeInput = document.getElementById('breakTimeInput');
+
+    enforceNumericIntegerInput(studyTimeInput);
+    enforceNumericIntegerInput(breakTimeInput);
+
 
     startButton = document.getElementById('startTimer');
     pauseButton = document.getElementById('pauseTimer');
@@ -105,6 +123,8 @@ export function loadStudyRoom() {
     addTimerFunctionality();
     updateTimerDisplay(studyRoomState.remainingTime);
 
+    //Wallpaper
+    updateWallpaper(studyRoomState.wallpaper);
 }
 
 let timerInterval;
@@ -115,7 +135,7 @@ function addTimerFunctionality() {
   
   //Start button click event
   startButton.addEventListener('click', () => {
-    console.log("Start button clicked.");
+    //console.log("Start button clicked.");
     studyRoomState.inputs.studyTimeInput = parseInt(document.getElementById('studyTimeInput').value);
     studyRoomState.inputs.breakTimeInput = parseInt(document.getElementById('breakTimeInput').value);
 
@@ -213,7 +233,7 @@ function startTimer() {
 
           // Play alarm sound
           alarmSound.play();
-          console.log("Alarm sound played");
+          //console.log("Alarm sound played");
 
           alarmSound.onended = () => {
             studyRoomState.isStudyTime = !studyRoomState.isStudyTime;
@@ -240,6 +260,7 @@ function startTimer() {
   timerWorker.postMessage({ command: "start", intervalTime: 1000 });
 }
 
+//Stop the timer
 function stopTimerWorker() {
   if (timerWorker) {
     timerWorker.postMessage({ command: "stop" });
@@ -345,7 +366,7 @@ function toggleSessionElements(sessionActive) {
       if (!studyRoomState.isStudyTime) {
         backgroundMusic.pause();
       }
-      
+      /*
       console.log("Tab became visible.");
       console.log(`alarmSound.paused: ${alarmSound.paused}`);
       console.log(`alarmSound.currentTime: ${alarmSound.currentTime}`);
@@ -353,7 +374,54 @@ function toggleSessionElements(sessionActive) {
       console.log(`backgroundMusic.paused: ${backgroundMusic.paused}`);
       console.log(`backgroundMusic.currentTime: ${backgroundMusic.currentTime}`);
       console.log(`backgroundMusic.ended: ${backgroundMusic.ended}`); 
-      console.log("Tab visible. Ensuring alarm sound does not play unintentionally.");
+      console.log("Tab visible. Ensuring alarm sound does not play unintentionally.");*/
       
     }
-  });
+  }); 
+
+  function updateWallpaper(newWallpaper) {
+    studyRoomState.wallpaper = newWallpaper;
+    const backgroundDiv = document.querySelector('.study-room-background');
+    if (backgroundDiv) {
+      backgroundDiv.style.backgroundImage = `url(${studyRoomState.wallpaper})`;
+    }
+    //Change text color
+    const textElements = document.querySelectorAll(
+      '.study-room-content h1, .study-room-content h2, .study-room-content label, #timerDisplay, #studyPrompt'
+    );
+  
+    const textColor = wallpaperStyles[newWallpaper] || "black"; // Default to black if no style is found
+    textElements.forEach((element) => {
+      element.style.color = textColor;
+    });
+  }
+
+  //forces the input box to only take intergers
+  function enforceNumericIntegerInput(inputElement) {
+    inputElement.addEventListener('keydown', (event) => {
+      // Allow navigation keys and common control keys
+      const allowedKeys = [
+        'Backspace', 'ArrowLeft', 'ArrowRight', 'Delete', 'Tab', 
+        'Enter', 'Escape'
+      ];
+      if (allowedKeys.includes(event.key)) return;
+  
+      // Allow only digits
+      if (!/^[0-9]$/.test(event.key)) {
+        event.preventDefault(); // Block invalid input
+      }
+    });
+  
+    inputElement.addEventListener('input', () => {
+      // Remove any non-integer values that might have bypassed keydown
+      inputElement.value = inputElement.value.replace(/[^0-9]/g, '');
+    });
+  
+    inputElement.addEventListener('blur', () => {
+      // Ensure the value is at least the minimum value when leaving the field
+      if (inputElement.value === '' || Number(inputElement.value) < inputElement.min) {
+        inputElement.value = inputElement.min;
+      }
+    });
+  }
+  
