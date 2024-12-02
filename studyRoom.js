@@ -233,9 +233,10 @@ function startTimer() {
 
           // Play alarm sound
           alarmSound.play();
-          //console.log("Alarm sound played");
+          console.log("Alarm sound played");
 
           alarmSound.onended = () => {
+            console.log("this is triggered")
             studyRoomState.isStudyTime = !studyRoomState.isStudyTime;
             studyRoomState.remainingTime = studyRoomState.isStudyTime
               ? studyRoomState.studyTime
