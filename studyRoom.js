@@ -149,10 +149,7 @@ function addTimerFunctionality() {
       : studyRoomState.breakTime;
       studyRoomState.timerRunning = true;
       updateTimerDisplay(studyRoomState.remainingTime);
-      //backgroundMusic.play();
-      ///
-      alarmSound.play();
-      ///
+      backgroundMusic.play();
       console.log("This gigi line.");
       startTimer();
       studyRoomState.pauseButtonDisabled = false;
