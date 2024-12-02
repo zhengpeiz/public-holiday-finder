@@ -149,7 +149,7 @@ function addTimerFunctionality() {
       : studyRoomState.breakTime;
       studyRoomState.timerRunning = true;
       updateTimerDisplay(studyRoomState.remainingTime);
-      backgroundMusic.play();
+      //backgroundMusic.play();
       ///
       alarmSound.play();
       ///
