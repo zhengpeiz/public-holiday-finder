@@ -154,7 +154,7 @@ function addTimerFunctionality() {
       backgroundMusic.play();
 
       //Play the fake alarm sound 
-      alarmSound.src = "assets/sounds/silence.mp3";
+      //alarmSound.src = "assets/sounds/silence.mp3";
       alarmSound.play(); 
       
       
