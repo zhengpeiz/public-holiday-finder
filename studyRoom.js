@@ -155,7 +155,12 @@ function addTimerFunctionality() {
 
       //Play the fake alarm sound 
       //alarmSound.src = "assets/sounds/silence.mp3";
-      alarmSound.play(); 
+      alarmSound.play().then(() => {
+        alarmSound.pause();       // Pause the audio immediately
+        alarmSound.currentTime = 0; // Reset the playback position to the beginning
+      }).catch((e) => {
+        console.error("Error playing sound:", e);
+      });
       
       
 
