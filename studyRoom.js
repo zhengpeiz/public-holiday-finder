@@ -98,7 +98,9 @@ export function loadStudyRoom() {
 </div>
 
     
-    `;
+    `; 
+
+ 
 
     const studyTimeInput = document.getElementById('studyTimeInput');
     const breakTimeInput = document.getElementById('breakTimeInput');
@@ -150,7 +152,14 @@ function addTimerFunctionality() {
       studyRoomState.timerRunning = true;
       updateTimerDisplay(studyRoomState.remainingTime);
       backgroundMusic.play();
-      console.log("This gigi line.");
+
+      //Play the fake alarm sound 
+      alarmSound.src = "assets/sounds/silence.mp3";
+      alarmSound.play(); 
+      
+      
+
+      console.log("Start button pushed.");
       startTimer();
       studyRoomState.pauseButtonDisabled = false;
     }
@@ -225,7 +234,10 @@ function startTimer() {
           studyRoomState.remainingTime = Math.ceil(timeRemainingMs / 1000);
           updateTimerDisplay(studyRoomState.remainingTime);
         } else {
-          backgroundMusic.pause();
+          //alarmSound.pause();
+          //Change it back
+          alarmSound.src = "assets/sounds/alarm.mp3";
+          
           alarmSound.play();
 
           studyRoomState.pauseButtonDisabled = true;
