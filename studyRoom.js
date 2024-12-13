@@ -74,10 +74,7 @@ function updateButtonText(buttonId, text) {
 
 //When the study room is Loaded
 export function loadStudyRoom() {
-  if (!timerWorker) {
-    timerWorker = new Worker("timerWorker.js");
-    timerWorker.postMessage({ command: "preload" }); // A no-op message for readiness
-  }
+  
   
   const contentPlaceholder = document.getElementById("content-placeholder");
   contentPlaceholder.innerHTML = `
