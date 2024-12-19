@@ -136,11 +136,25 @@ export function loadStudyRoom() {
   //Wallpaper
   updateWallpaper(studyRoomState.wallpaper);
 
-  // Hide the loading screen and show the study room
-  setTimeout(() => {
+  // Wait for all resources to load
+  const backgroundImage = new Image();
+  backgroundImage.src = studyRoomState.wallpaper;
+
+  const checkAudioLoaded = new Promise((resolve) => {
+    let audioCount = 2; // Two audio files: alarmSound and backgroundMusic
+    [alarmSound, backgroundMusic].forEach((audio) => {
+      audio.oncanplaythrough = () => {
+        audioCount--;
+        if (audioCount === 0) resolve();
+      };
+    });
+  });
+
+  Promise.all([checkImageLoaded(backgroundImage), checkAudioLoaded]).then(() => {
     document.getElementById("loading-screen").style.display = "none";
     document.querySelector(".study-room-container").style.display = "block";
-  }, 500); // Add a short delay to ensure smooth transition
+  });
+
 }
 
 let timerInterval;
@@ -449,6 +463,17 @@ function toggleSessionElements(sessionActive) {
       // Ensure the value is at least the minimum value when leaving the field
       if (inputElement.value === '' || Number(inputElement.value) < inputElement.min) {
         inputElement.value = inputElement.min;
+      }
+    });
+  }
+
+  // Helper function to check if image is fully loaded
+  function checkImageLoaded(image) {
+    return new Promise((resolve) => {
+      if (image.complete && image.naturalHeight !== 0) {
+        resolve();
+      } else {
+        image.onload = resolve;
       }
     });
   }
