@@ -78,6 +78,12 @@ export function loadStudyRoom() {
   
   const contentPlaceholder = document.getElementById("content-placeholder");
   contentPlaceholder.innerHTML = `
+  <div id="loading-screen">
+    <div class="spinner"></div>
+    <h1>Loading Study Room...</h1>
+  </div>
+
+
   <div class="study-room-container">
   <div class="study-room-background"></div>
   <div class="study-room-content">
@@ -104,31 +110,37 @@ export function loadStudyRoom() {
 
  
 
-    const studyTimeInput = document.getElementById('studyTimeInput');
-    const breakTimeInput = document.getElementById('breakTimeInput');
+  const studyTimeInput = document.getElementById('studyTimeInput');
+  const breakTimeInput = document.getElementById('breakTimeInput');
 
-    enforceNumericIntegerInput(studyTimeInput);
-    enforceNumericIntegerInput(breakTimeInput);
+  enforceNumericIntegerInput(studyTimeInput);
+  enforceNumericIntegerInput(breakTimeInput);
 
 
-    startButton = document.getElementById('startTimer');
-    pauseButton = document.getElementById('pauseTimer');
-    timerDisplay = document.getElementById('timerDisplay');
-    alarmSound = document.getElementById('alarmSound');
-    backgroundMusic = document.getElementById('backgroundMusic');
-    endSessionButton = document.getElementById('endSession');
+  startButton = document.getElementById('startTimer');
+  pauseButton = document.getElementById('pauseTimer');
+  timerDisplay = document.getElementById('timerDisplay');
+  alarmSound = document.getElementById('alarmSound');
+  backgroundMusic = document.getElementById('backgroundMusic');
+  endSessionButton = document.getElementById('endSession');
 
     
     
-    toggleSessionElements(studyRoomState.sessionActive);
-    toggleStudyPromt(studyRoomState.isStudyTime);
-    initializeAudioSettings();
+  toggleSessionElements(studyRoomState.sessionActive);
+  toggleStudyPromt(studyRoomState.isStudyTime);
+  initializeAudioSettings();
 
-    addTimerFunctionality();
-    updateTimerDisplay(studyRoomState.remainingTime);
+  addTimerFunctionality();
+  updateTimerDisplay(studyRoomState.remainingTime);
 
-    //Wallpaper
-    updateWallpaper(studyRoomState.wallpaper);
+  //Wallpaper
+  updateWallpaper(studyRoomState.wallpaper);
+
+  // Hide the loading screen and show the study room
+  setTimeout(() => {
+    document.getElementById("loading-screen").style.display = "none";
+    document.querySelector(".study-room-container").style.display = "block";
+  }, 500); // Add a short delay to ensure smooth transition
 }
 
 let timerInterval;
