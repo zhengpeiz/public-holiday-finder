@@ -139,7 +139,7 @@ export function loadStudyRoom() {
   // Wait for all resources to load
   const backgroundImage = new Image();
   backgroundImage.src = studyRoomState.wallpaper;
-
+  
   const checkAudioLoaded = new Promise((resolve) => {
     let audioCount = 2; // Two audio files: alarmSound and backgroundMusic
     [alarmSound, backgroundMusic].forEach((audio) => {
@@ -179,15 +179,21 @@ function addTimerFunctionality() {
       : studyRoomState.breakTime;
       studyRoomState.timerRunning = true;
       updateTimerDisplay(studyRoomState.remainingTime);
+      
       backgroundMusic.play();
 
       //Play the fake alarm sound 
       //alarmSound.src = "assets/sounds/silence.mp3";
+      const originalVolume = alarmSound.volume
+      alarmSound.volume = 0;
+      
       alarmSound.play().then(() => {
         alarmSound.pause();       // Pause the audio immediately
         alarmSound.currentTime = 0; // Reset the playback position to the beginning
+        alarmSound.volume = originalVolume;
       }).catch((e) => {
         console.error("Error playing sound:", e);
+        alarmSound.volume = originalVolume;
       });
       
       
