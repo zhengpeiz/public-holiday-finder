@@ -136,24 +136,6 @@ export function loadStudyRoom() {
   //Wallpaper
   updateWallpaper(studyRoomState.wallpaper);
 
-  // Wait for all resources to load
-  const backgroundImage = new Image();
-  backgroundImage.src = studyRoomState.wallpaper;
-  
-  const checkAudioLoaded = new Promise((resolve) => {
-    let audioCount = 2; // Two audio files: alarmSound and backgroundMusic
-    [alarmSound, backgroundMusic].forEach((audio) => {
-      audio.oncanplaythrough = () => {
-        audioCount--;
-        if (audioCount === 0) resolve();
-      };
-    });
-  });
-
-  Promise.all([checkImageLoaded(backgroundImage), checkAudioLoaded]).then(() => {
-    document.getElementById("loading-screen").style.display = "none";
-    document.querySelector(".study-room-container").style.display = "block";
-  });
 
 }
 
