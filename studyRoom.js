@@ -128,7 +128,7 @@ export function loadStudyRoom() {
   initializeAudioSettings();
 
   addTimerFunctionality();
-  updateTimerDisplay(studyRoomState.remainingTime);
+  //updateTimerDisplay(studyRoomState.remainingTime);
 
   //Wallpaper
   updateWallpaper(studyRoomState.wallpaper);
