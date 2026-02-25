@@ -123,12 +123,12 @@ export function loadStudyRoom() {
 
     
     
-  //toggleSessionElements(studyRoomState.sessionActive);
-  //toggleStudyPromt(studyRoomState.isStudyTime);
+  toggleSessionElements(studyRoomState.sessionActive);
+  toggleStudyPromt(studyRoomState.isStudyTime);
   initializeAudioSettings();
 
   addTimerFunctionality();
-  //updateTimerDisplay(studyRoomState.remainingTime);
+  updateTimerDisplay(studyRoomState.remainingTime);
 
   //Wallpaper
   updateWallpaper(studyRoomState.wallpaper);
