@@ -61,7 +61,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Load Virtual Study Room Content
   studyRoomOption.addEventListener('click', () => {
-    switchPage('studyRoom');
+    //switchPage('studyRoom');
     loadStudyRoom()
   });
 
