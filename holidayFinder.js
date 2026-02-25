@@ -75,3 +75,7 @@ function displayMessage(message){
   const resultsDiv = document.getElementById('holidayResults');
   resultsDiv.innerHTML = `<p>${message}</p>`;
 }
+
+export function destroyHolidayFinder() {
+  // nothing to cleanup for now
+}

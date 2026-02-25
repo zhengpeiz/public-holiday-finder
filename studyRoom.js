@@ -207,28 +207,7 @@ function addTimerFunctionality() {
 
   //End button click event
   endSessionButton.addEventListener('click', () => {
-    // clear the timer
-    stopTimerWorker();
-
-    // reset the session state;
-    studyRoomState.sessionActive = false;
-    studyRoomState.timerRunning = false;
-    studyRoomState.remainingTime = 0;
-    studyRoomState.pauseOrResume = true;
-    studyRoomState.isStudyTime = true;
-    
-    //stop the sounds
-    if (!alarmSound.paused) {
-      alarmSound.pause();       // Stop the alarm immediately
-      alarmSound.currentTime = 0; // Reset to the beginning
-    } 
-
-    if (!backgroundMusic.paused) {
-      backgroundMusic.pause();       // Stop the music immediately
-      backgroundMusic.currentTime = 0; // Reset to the beginning
-    } 
-
-    updateTimerDisplay(0);
+    endSession();
   });
 }
 //Start/Continue the Timer based on the remaining time and the study&break time set by the user
@@ -388,20 +367,7 @@ function toggleSessionElements(sessionActive) {
   }
   
   //Suppress Safari from play audio when clicking back when it's not suppose to play
-  document.addEventListener("visibilitychange", () => {
-    if (!document.hidden) {
-      if (studyRoomState.remainingTime > 0 || alarmSound.paused) {
-        alarmSound.pause();
-        alarmSound.currentTime = 0;
-      }
-
-      if (!studyRoomState.isStudyTime) {
-        backgroundMusic.pause();
-      }
-      
-      
-    }
-  }); 
+  document.addEventListener("visibilitychange", handleVisibilityChange);
   
 
   function updateWallpaper(newWallpaper) {
@@ -462,4 +428,55 @@ function toggleSessionElements(sessionActive) {
   }
   
   
-  
+  function endSession() {
+    // stop timer / worker
+    stopTimerWorker();
+
+    // reset state
+    studyRoomState.sessionActive = false;
+    studyRoomState.timerRunning = false;
+    studyRoomState.remainingTime = 0;
+    studyRoomState.pauseOrResume = true;
+    studyRoomState.isStudyTime = true;
+    studyRoomState.pauseButtonDisabled = true;
+
+    // stop sounds
+    if (alarmSound && !alarmSound.paused) {
+      alarmSound.pause();
+      alarmSound.currentTime = 0;
+    }
+    if (backgroundMusic && !backgroundMusic.paused) {
+      backgroundMusic.pause();
+      backgroundMusic.currentTime = 0;
+    }
+
+  updateTimerDisplay(0); 
+  } 
+
+export function destroyStudyRoom() {
+  // end the study session if it's active and clean up resources
+  try {
+    endSession();
+  } catch (e) {
+    stopTimerWorker();
+    if (alarmSound) { alarmSound.pause(); alarmSound.currentTime = 0; }
+    if (backgroundMusic) { backgroundMusic.pause(); backgroundMusic.currentTime = 0; }
+  }
+
+  // clear the page content
+  const content = document.getElementById("content-placeholder");
+  if (content) content.innerHTML = "";
+} 
+
+function handleVisibilityChange() {
+  if (!document.hidden) {
+    if (studyRoomState.remainingTime > 0 || (alarmSound && alarmSound.paused)) {
+      if (alarmSound) { alarmSound.pause(); alarmSound.currentTime = 0; }
+    }
+    if (!studyRoomState.isStudyTime && backgroundMusic) {
+      backgroundMusic.pause();
+    }
+  } 
+
+  document.removeEventListener("visibilitychange", handleVisibilityChange);
+}
