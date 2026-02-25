@@ -132,8 +132,6 @@ export function loadStudyRoom() {
 
   //Wallpaper
   updateWallpaper(studyRoomState.wallpaper);
-
-
 }
 
 let timerInterval;
