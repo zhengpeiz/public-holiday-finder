@@ -130,7 +130,7 @@ export function loadStudyRoom() {
   toggleStudyPromt(studyRoomState.isStudyTime);
   initializeAudioSettings();
 
-  //addTimerFunctionality();
+  addTimerFunctionality();
   updateTimerDisplay(studyRoomState.remainingTime);
 
   //Wallpaper
