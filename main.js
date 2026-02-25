@@ -1,5 +1,5 @@
 import { loadHolidayFinder } from './holidayFinder.js';
-import { loadStudyRoom } from './studyRoom.js';
+import { loadStudyRoom, destroyStudyRoom } from './studyRoom.js';
 
 document.addEventListener('DOMContentLoaded', () => {
   const menuIcon = document.getElementById('menu-icon');
@@ -29,23 +29,44 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
+  //different pages
+  const pages = {
+    studyRoom: {
+      load: loadStudyRoom,
+      destroy: destroyStudyRoom,
+    },
+    holidayFinder: {
+      load: loadHolidayFinder,
+      destroy: destroyHolidayFinder ?? (() => {}),
+    },
+  };
+
+  let currentPageKey = null;
+
   // Handle menu option clicks
-  function setActiveOption(option) {
-    studyRoomOption.classList.remove('active');
-    holidayFinderOption.classList.remove('active');
-    option.classList.add('active');
+  function switchPage(nextPageKey) {
+    //Nothing happens when clicking the same page option
+    if (currentPageKey === nextPageKey) return;
+
+    // destroy current page → destroy
+    if (currentPageKey && pages[currentPageKey]?.destroy) {
+      pages[currentPageKey].destroy();
+    }
+
+    // load next page → load
+    pages[nextPageKey].load();
+
+    currentPageKey = nextPageKey;
   }
 
   // Load Virtual Study Room Content
   studyRoomOption.addEventListener('click', () => {
-    setActiveOption(studyRoomOption);
-    loadStudyRoom();
+    switchPage('studyRoom');
   });
 
   // Load Holiday Finder Content
   holidayFinderOption.addEventListener('click', () => {
-    setActiveOption(holidayFinderOption);
-    loadHolidayFinder();
+    switchPage('holidayFinder');
   }); 
 
   studyRoomOption.click();
