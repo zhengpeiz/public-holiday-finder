@@ -33,18 +33,27 @@ document.addEventListener('DOMContentLoaded', () => {
   const pages = {
     studyRoom: {
       load: loadStudyRoom,
-      destroy: destroyStudyRoom,
+      destroy: destroyStudyRoom, 
+      option: studyRoomOption,
     },
     holidayFinder: {
       load: loadHolidayFinder,
       destroy: destroyHolidayFinder ?? (() => {}),
+      option: holidayFinderOption,
     },
   };
 
   let currentPageKey = null;
 
   // Handle menu option clicks
+  function setActiveOptionByKey(pageKey) {
+    menuOptions.forEach((el) => {
+      el.classList.toggle("active", el.dataset.page === pageKey);
+    });
+  }
+
   function switchPage(nextPageKey) {
+    
     //Nothing happens when clicking the same page option
     if (currentPageKey === nextPageKey) return;
 
@@ -55,6 +64,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // load next page → load
     pages[nextPageKey].load();
+
+    Object.values(pages).forEach((page) => {
+      page.option?.classList.remove("active");
+    });
+
+    pages[nextPageKey].option?.classList.add("active");
 
     currentPageKey = nextPageKey;
   }
