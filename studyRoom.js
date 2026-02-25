@@ -427,46 +427,30 @@ function toggleSessionElements(sessionActive) {
     });
   }
   
-  
-  function endSession() {
-    // stop timer / worker
-    stopTimerWorker();
+ function endSession() {
+  // stop timer / worker
+  stopTimerWorker();
 
-    // reset state
-    studyRoomState.sessionActive = false;
-    studyRoomState.timerRunning = false;
-    studyRoomState.remainingTime = 0;
-    studyRoomState.pauseOrResume = true;
-    studyRoomState.isStudyTime = true;
-    studyRoomState.pauseButtonDisabled = true;
+  // reset state
+  studyRoomState.sessionActive = false;
+  studyRoomState.timerRunning = false;
+  studyRoomState.remainingTime = 0;
+  studyRoomState.pauseOrResume = true;
+  studyRoomState.isStudyTime = true;
+  studyRoomState.pauseButtonDisabled = true;
 
-    // stop sounds
-    if (alarmSound && !alarmSound.paused) {
-      alarmSound.pause();
-      alarmSound.currentTime = 0;
-    }
-    if (backgroundMusic && !backgroundMusic.paused) {
-      backgroundMusic.pause();
-      backgroundMusic.currentTime = 0;
-    }
-
-  updateTimerDisplay(0); 
-  } 
-
-export function destroyStudyRoom() {
-  // end the study session if it's active and clean up resources
-  try {
-    endSession();
-  } catch (e) {
-    stopTimerWorker();
-    if (alarmSound) { alarmSound.pause(); alarmSound.currentTime = 0; }
-    if (backgroundMusic) { backgroundMusic.pause(); backgroundMusic.currentTime = 0; }
+  // stop sounds
+  if (alarmSound && !alarmSound.paused) {
+    alarmSound.pause();
+    alarmSound.currentTime = 0;
+  }
+  if (backgroundMusic && !backgroundMusic.paused) {
+    backgroundMusic.pause();
+    backgroundMusic.currentTime = 0;
   }
 
-  // clear the page content
-  const content = document.getElementById("content-placeholder");
-  if (content) content.innerHTML = "";
-} 
+  updateTimerDisplay(0);
+}
 
 function handleVisibilityChange() {
   if (!document.hidden) {
@@ -476,7 +460,21 @@ function handleVisibilityChange() {
     if (!studyRoomState.isStudyTime && backgroundMusic) {
       backgroundMusic.pause();
     }
-  } 
+  }
+}
 
+export function destroyStudyRoom() {
+  try {
+    endSession();
+  } catch (e) {
+    stopTimerWorker();
+    if (alarmSound) { alarmSound.pause(); alarmSound.currentTime = 0; }
+    if (backgroundMusic) { backgroundMusic.pause(); backgroundMusic.currentTime = 0; }
+  }
+
+  // clear the page
+  const content = document.getElementById("content-placeholder");
+  if (content) content.innerHTML = "";
+  
   document.removeEventListener("visibilitychange", handleVisibilityChange);
 }

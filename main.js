@@ -29,7 +29,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // Handle menu option clicks
   //different pages
   const pages = {
     studyRoom: {
@@ -38,12 +37,13 @@ document.addEventListener('DOMContentLoaded', () => {
     },
     holidayFinder: {
       load: loadHolidayFinder,
-      destroy: destroyHolidayFinder,
+      destroy: destroyHolidayFinder ?? (() => {}),
     },
   };
 
   let currentPageKey = null;
 
+  // Handle menu option clicks
   function switchPage(nextPageKey) {
     //Nothing happens when clicking the same page option
     if (currentPageKey === nextPageKey) return;
@@ -62,6 +62,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Load Virtual Study Room Content
   studyRoomOption.addEventListener('click', () => {
     switchPage('studyRoom');
+    
   });
 
   // Load Holiday Finder Content
