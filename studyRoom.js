@@ -78,10 +78,7 @@ export function loadStudyRoom() {
   
   const contentPlaceholder = document.getElementById("content-placeholder");
   contentPlaceholder.innerHTML = `
-  <div id="loading-screen">
-    <div class="spinner"></div>
-    <h1>Loading Study Room...</h1>
-  </div>
+  
 
 
   <div class="study-room-container">

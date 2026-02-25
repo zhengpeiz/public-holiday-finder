@@ -39,7 +39,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Load Virtual Study Room Content
   studyRoomOption.addEventListener('click', () => {
     setActiveOption(studyRoomOption);
-    //loadStudyRoom();
+    loadStudyRoom();
   });
 
   // Load Holiday Finder Content
