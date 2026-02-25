@@ -123,8 +123,8 @@ export function loadStudyRoom() {
 
     
     
-  toggleSessionElements(studyRoomState.sessionActive);
-  toggleStudyPromt(studyRoomState.isStudyTime);
+  //toggleSessionElements(studyRoomState.sessionActive);
+  //toggleStudyPromt(studyRoomState.isStudyTime);
   initializeAudioSettings();
 
   addTimerFunctionality();
