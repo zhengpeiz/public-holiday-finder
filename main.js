@@ -62,6 +62,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Load Virtual Study Room Content
   studyRoomOption.addEventListener('click', () => {
     switchPage('studyRoom');
+    loadStudyRoom()
   });
 
   // Load Holiday Finder Content
