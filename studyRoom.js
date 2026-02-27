@@ -258,8 +258,8 @@ function startTimer() {
               silenceSound.pause();
               backgroundMusic.play();
             } else {
-              backgroundMusic.pause();
               silenceSound.play();
+              backgroundMusic.pause();
             }
 
             startTimer(); // Restart the timer
