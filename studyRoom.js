@@ -1,4 +1,4 @@
-let startButton, pauseButton, timerDisplay, alarmSound, backgroundMusic, endSessionButton;
+let startButton, pauseButton, timerDisplay, alarmSound, backgroundMusic, endSessionButton, silenceSound;
 
 const studyRoomState = new Proxy(
   {
