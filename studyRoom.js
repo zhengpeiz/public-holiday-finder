@@ -120,6 +120,7 @@ export function loadStudyRoom() {
   alarmSound = document.getElementById('alarmSound');
   backgroundMusic = document.getElementById('backgroundMusic');
   endSessionButton = document.getElementById('endSession');
+  silenceSound = document.getElementById('silenceSound');
 
     
     
@@ -254,9 +255,11 @@ function startTimer() {
 
             // Handle background music
             if (studyRoomState.isStudyTime) {
+              silenceSound.pause();
               backgroundMusic.play();
             } else {
               backgroundMusic.pause();
+              silenceSound.play();
             }
 
             startTimer(); // Restart the timer
